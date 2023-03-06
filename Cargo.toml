@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 license = "MIT"
 description = "serde-compatible newtype wrapper for sqlx::postgres::PgRow"
+repository = "https://github.com/kurtbuilds/sqlx-pgrow-serde"
+documentation = "https://docs.rs/sqlx-pgrow-serde"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
