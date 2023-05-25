@@ -4,7 +4,7 @@ use serde_json::{Value};
 
 use serde::{Serialize, Serializer};
 use serde::ser::{SerializeMap, SerializeSeq};
-use sqlx_core::postgres::{PgValueRef, Postgres}; // 1.0.104
+use sqlx_core::postgres::{PgValueRef, Postgres};
 
 pub fn read_header(row: &PgRow) -> Vec<String> {
     let columns = row.columns();
@@ -32,6 +32,9 @@ pub fn serialize_pgvalueref<S>(value: &PgValueRef, s: S) -> Result<S::Ok, S::Err
     where
         S: Serializer,
 {
+    if value.is_null() {
+        return s.serialize_none();
+    }
     let value = value.clone();
     let info = value.type_info();
     let name = info.name();
@@ -82,11 +85,22 @@ pub fn serialize_pgvalueref<S>(value: &PgValueRef, s: S) -> Result<S::Ok, S::Err
             let v: chrono::DateTime::<chrono::Utc> = Decode::<Postgres>::decode(value).unwrap();
             s.serialize_str(&v.to_rfc3339())
         }
+        "DATE" => {
+            use sqlx::types::chrono;
+            let v: chrono::NaiveDate = Decode::<Postgres>::decode(value).unwrap();
+            s.serialize_str(&v.to_string())
+        }
+        "TIME" => {
+            use sqlx::types::chrono;
+            let v: chrono::NaiveTime = Decode::<Postgres>::decode(value).unwrap();
+            s.serialize_str(&v.to_string())
+        }
         "UUID" => {
             let v: String = Decode::<Postgres>::decode(value).unwrap();
             s.serialize_str(&v)
         }
         _ => {
+            dbg!(name);
             let v: String = Decode::<Postgres>::decode(value).unwrap();
             s.serialize_str(&v)
         }
@@ -315,5 +329,11 @@ mod tests {
         let row = SerVecPgRow::from(row);
         let row = serde_json::to_string(&row).unwrap();
         assert_eq!(row, r#"[1,"hello"]"#);
+
+        let row = conn.fetch_one("select null::text as foo ").await.unwrap();
+        let row = SerVecPgRow::from(row);
+        let row = serde_json::to_string(&row).unwrap();
+        assert_eq!(row, r#"[null]"#);
     }
+
 }
