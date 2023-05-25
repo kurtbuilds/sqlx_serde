@@ -18,6 +18,7 @@ check:
 
 version VERSION:
     cargo set-version --bump {{ VERSION }}
+    git commit Cargo.toml -m "Version bump"
 
 publish:
     cargo publish -F runtime-tokio-rustls,postgres,chrono
