@@ -20,8 +20,8 @@ version VERSION:
     cargo set-version --bump {{ VERSION }}
 
 publish:
-    cargo publish
-    
+    cargo publish -F runtime-tokio-rustls,postgres,chrono
+
 patch:
     just version patch
     just publish
