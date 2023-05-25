@@ -38,7 +38,6 @@ pub fn serialize_pgvalueref<S>(value: &PgValueRef, s: S) -> Result<S::Ok, S::Err
     let value = value.clone();
     let info = value.type_info();
     let name = info.name();
-    println!("name: {}", name);
     match name {
         "BOOL" => {
             let v: bool = Decode::<Postgres>::decode(value).unwrap();
