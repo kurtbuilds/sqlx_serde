@@ -15,3 +15,13 @@ install:
 
 check:
     cargo check
+
+version VERSION:
+    cargo set-version --bump {{ VERSION }}
+
+publish:
+    cargo publish
+    
+patch:
+    just version patch
+    just publish
