@@ -38,6 +38,7 @@ pub fn serialize_pgvalueref<S>(value: &PgValueRef, s: S) -> Result<S::Ok, S::Err
     let value = value.clone();
     let info = value.type_info();
     let name = info.name();
+    println!("name: {}", name);
     match name {
         "BOOL" => {
             let v: bool = Decode::<Postgres>::decode(value).unwrap();
@@ -59,9 +60,14 @@ pub fn serialize_pgvalueref<S>(value: &PgValueRef, s: S) -> Result<S::Ok, S::Err
             let v: f32 = Decode::<Postgres>::decode(value).unwrap();
             s.serialize_f32(v)
         }
-        "FLOAT8" | "NUMERIC" => {
+        "FLOAT8" => {
             let v: f64 = Decode::<Postgres>::decode(value).unwrap();
             s.serialize_f64(v)
+        }
+        #[cfg(feature = "decimal")]
+        "NUMERIC" => {
+            let v: sqlx::types::Decimal = Decode::<Postgres>::decode(value).unwrap();
+            s.serialize_str(&v.to_string())
         }
         "CHAR" | "VARCHAR" | "TEXT" | "\"CHAR\"" => {
             let v: String = Decode::<Postgres>::decode(value).unwrap();
@@ -100,7 +106,6 @@ pub fn serialize_pgvalueref<S>(value: &PgValueRef, s: S) -> Result<S::Ok, S::Err
             s.serialize_str(&v)
         }
         _ => {
-            dbg!(name);
             let v: String = Decode::<Postgres>::decode(value).unwrap();
             s.serialize_str(&v)
         }
@@ -292,8 +297,8 @@ impl Into<PgRow> for SerVecPgRow {
 
 #[cfg(test)]
 mod tests {
-    use sqlx::{Connection, Executor, PgConnection};
-    // use futures::StreamExt;
+    use sqlx::{Connection, Executor, PgConnection, query};
+    use sqlx_core::types::chrono;
     use super::*;
 
     #[tokio::test]
@@ -335,5 +340,4 @@ mod tests {
         let row = serde_json::to_string(&row).unwrap();
         assert_eq!(row, r#"[null]"#);
     }
-
 }
