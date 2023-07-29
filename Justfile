@@ -21,7 +21,7 @@ version VERSION:
     git commit Cargo.toml -m "Version bump"
 
 publish:
-    cargo publish -F runtime-tokio-rustls,postgres,chrono
+    cargo publish --all-features
 
 patch:
     just version patch
