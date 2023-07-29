@@ -5,7 +5,7 @@ run *ARGS:
     cargo run -- "$@"
 
 test *ARGS:
-    cargo test --features postgres,sqlite,uuid,json,chrono,decimal,runtime-tokio-rustls -- "$@"
+    cargo test --all-features -- "$@"
 
 build:
     cargo build

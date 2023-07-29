@@ -1,10 +1,9 @@
-use sqlx::postgres::PgRow;
+use sqlx::postgres::{PgRow, PgValueRef, Postgres};
 use sqlx::{Column, Decode, Row, TypeInfo, ValueRef};
 use serde_json::{Value};
 
 use serde::{Serialize, Serializer};
 use serde::ser::{SerializeMap, SerializeSeq};
-use sqlx_core::postgres::{PgValueRef, Postgres};
 
 pub fn read_header(row: &PgRow) -> Vec<String> {
     let columns = row.columns();
@@ -264,7 +263,7 @@ impl Into<PgRow> for SerMapPgRow {
 #[derive(Serialize)]
 pub struct SerPgValueRef<'r>(
     #[serde(serialize_with = "serialize_pgvalueref")]
-    PgValueRef<'r>
+    PgValueRef<'r>,
 );
 
 impl From<PgRow> for SerVecPgRow {
@@ -296,8 +295,7 @@ impl Into<PgRow> for SerVecPgRow {
 
 #[cfg(test)]
 mod tests {
-    use sqlx::{Connection, Executor, PgConnection, query};
-    use sqlx_core::types::chrono;
+    use sqlx::{Connection, Executor, PgConnection};
     use super::*;
 
     #[tokio::test]
@@ -314,11 +312,11 @@ mod tests {
 
         let row = conn.fetch_one("select 3.3").await.unwrap();
         let row = read_row(&row);
-        assert_eq!(row[0].as_f64().unwrap(), 3.3);
+        assert_eq!(row[0].as_str().unwrap(), "3.3");
 
         let row = conn.fetch_one("select 3.3::numeric(19,4)").await.unwrap();
         let row = read_row(&row);
-        assert_eq!(row[0].as_f64().unwrap(), 3.3);
+        assert_eq!(row[0].as_str().unwrap(), "3.3000");
 
         let row = conn.fetch_one("select 'null'::jsonb").await.unwrap();
         let row = read_row(&row);
