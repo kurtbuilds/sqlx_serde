@@ -1,6 +1,6 @@
 [package]
-name = "sqlx-pgrow-serde"
-version = "0.2.0"
+name = "kurtbuilds_sqlx_serde"
+version = "0.3.0"
 edition = "2021"
 license = "MIT"
 description = "serde-compatible newtype wrapper for sqlx::postgres::PgRow"
@@ -13,8 +13,8 @@ documentation = "https://docs.rs/sqlx-pgrow-serde"
 futures = "0.3.28"
 serde = { version = "1.0.178", features = ["derive"] }
 serde_json = "1.0.104"
-sqlx = { version = "0.7.1" }
-sqlx-core = { version = "0.7.1" }
+sqlx = { version = "0.8" }
+sqlx-core = { version = "0.8" }
 tokio = { version = "1.29.1", features = ["full"] }
 
 [features]

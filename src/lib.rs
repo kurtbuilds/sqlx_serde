@@ -104,8 +104,9 @@ pub fn serialize_pgvalueref<S>(value: &PgValueRef, s: S) -> Result<S::Ok, S::Err
             s.serialize_str(&v)
         }
         _ => {
-            let v: String = Decode::<Postgres>::decode(value).unwrap();
-            s.serialize_str(&v)
+            panic!("unsupported type: {}", name)
+            // let v: String = Decode::<Postgres>::decode(value).unwrap();
+            // s.serialize_str(&v)
         }
         // PgType::Name => "NAME",
         // PgType::Oid => "OID",
