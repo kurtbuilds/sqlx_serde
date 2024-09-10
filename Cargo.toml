@@ -1,6 +1,6 @@
 [package]
 name = "kurtbuilds_sqlx_serde"
-version = "0.3.1"
+version = "0.3.2"
 edition = "2021"
 license = "MIT"
 description = "serde-compatible newtype wrapper for sqlx::postgres::PgRow"
