@@ -99,8 +99,10 @@ pub fn serialize_pgvalueref<S>(value: &PgValueRef, s: S) -> Result<S::Ok, S::Err
             let v: chrono::NaiveTime = Decode::<Postgres>::decode(value).unwrap();
             s.serialize_str(&v.to_string())
         }
+        #[cfg(feature = "uuid")]
         "UUID" => {
-            let v: String = Decode::<Postgres>::decode(value).unwrap();
+            let v: sqlx::types::Uuid = Decode::<Postgres>::decode(value).unwrap();
+            let v = v.to_string();
             s.serialize_str(&v)
         }
         _ => {
