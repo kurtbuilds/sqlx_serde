@@ -1,4 +1,4 @@
-# sqlx-pgrow-serde
+# sqlx_serde
 
 Check lib.rs for tests, which should give you a clear idea how to use the crate.
 
