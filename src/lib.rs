@@ -109,10 +109,14 @@ pub fn serialize_pgvalueref<S>(value: &PgValueRef, s: S) -> Result<S::Ok, S::Err
             let v = v.to_string();
             s.serialize_str(&v)
         }
+        #[cfg(not(feature = "uuid"))]
+        "UUID" => {
+            panic!("UUID type is not supported. Please enable the `uuid` feature on crate sqlx_serde.")
+        }
         _ => {
-            panic!("unsupported type: {}", name)
-            // let v: String = Decode::<Postgres>::decode(value).unwrap();
-            // s.serialize_str(&v)
+            let error_message = format!("Failed to deserialize postgres type {} as string", name);
+            let v: String = Decode::<Postgres>::decode(value).expect(&error_message);
+            s.serialize_str(&v)
         }
         // PgType::Name => "NAME",
         // PgType::Oid => "OID",

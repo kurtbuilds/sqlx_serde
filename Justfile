@@ -1,5 +1,6 @@
 set dotenv-load
 set positional-arguments
+set export
 
 run *ARGS:
     cargo run -- "$@"
@@ -26,3 +27,6 @@ publish:
 patch:
     just version patch
     just publish
+
+example $NAME:
+    cargo run --example $NAME -F postgres -F runtime-tokio-rustls

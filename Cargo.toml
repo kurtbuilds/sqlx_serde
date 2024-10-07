@@ -17,7 +17,7 @@ serde = { version = "1.0.178", features = ["derive"] }
 serde_json = "1.0.104"
 sqlx = { version = "0.8", features = ["postgres"] }
 sqlx-core = { version = "0.8" }
-tokio = { version = "1.29.1", features = ["full"] }
+tokio = { version = "1.29.1"}
 
 [features]
 json = ["sqlx/json"]
@@ -28,3 +28,7 @@ postgres = ["sqlx/postgres"]
 mysql = ["sqlx/mysql"]
 uuid = ["sqlx/uuid"]
 decimal = ["sqlx/rust_decimal"]
+
+
+[dev-dependencies]
+tokio = { version = "1.29.1", features = ["full"] }
